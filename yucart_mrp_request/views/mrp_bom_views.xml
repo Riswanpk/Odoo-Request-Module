@@ -1,0 +1,39 @@
+<odoo>
+<data>
+    <!-- BOM Tree/List View -->
+    <record id="view_bom_tree_inherit_yucart" model="ir.ui.view">
+        <field name="name">mrp.bom.tree.inherit.yucart</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_tmpl_id']" position="after">
+                <field name="product_uom_id" string="Unit of Measure"/>
+                <field name="product_owner_id" string="Product Owner"/>
+                <field name="admin_id" string="Production Manager"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- BOM Form View -->
+    <record id="view_bom_form_inherit_yucart" model="ir.ui.view">
+        <field name="name">mrp.bom.form.inherit.yucart</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="inside">
+                <group string="Manufacturing Info" col="1">
+                    <group>
+                        <field name="product_uom_id" string="Unit of Measure"/>
+                    </group>
+                    <group>
+                        <field name="product_owner_id" string="Product Owner"/>
+                    </group>
+                    <group>
+                        <field name="admin_id" string="Production Manager"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</data>
+</odoo>

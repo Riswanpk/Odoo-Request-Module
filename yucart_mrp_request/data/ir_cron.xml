@@ -1,0 +1,73 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Remind Product Owners at 10:00, 14:00, 17:00 -->
+        <record id="ir_cron_remind_product_owners_10" model="ir.cron">
+            <field name="name">Remind Product Owners 10:00</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_remind_product_owners()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=10, minute=0, second=0, microsecond=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+        <record id="ir_cron_remind_product_owners_14" model="ir.cron">
+            <field name="name">Remind Product Owners 14:00</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_remind_product_owners()</field>
+            <field name="interval_number">4</field>
+            <field name="interval_type">hours</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=14, minute=0, second=0, microsecond=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+        <record id="ir_cron_remind_product_owners_17" model="ir.cron">
+            <field name="name">Remind Product Owners 17:00</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_remind_product_owners()</field>
+            <field name="interval_number">3</field>
+            <field name="interval_type">hours</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=17, minute=0, second=0, microsecond=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+        <!-- Admin summary at 11:00 -->
+        <record id="ir_cron_admin_pending_summary" model="ir.cron">
+            <field name="name">Admin Pending Requests Summary 11:00</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_admin_pending_summary()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=11, minute=0, second=0, microsecond=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+        <!-- Remind Product Owners 2 minutes after creation -->
+        <record id="ir_cron_remind_product_owners_2min" model="ir.cron">
+            <field name="name">Remind Product Owners 2min</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_remind_product_owners()</field>
+            <field name="interval_number">2</field>
+            <field name="interval_type">minutes</field>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(minutes=2)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+        <!-- Delete Old Rejected Manufacturing Requests -->
+        <record id="ir_cron_delete_old_rejected_requests" model="ir.cron">
+            <field name="name">Delete Old Rejected Manufacturing Requests</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_delete_old_rejected_requests()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active">True</field>
+        </record>
+        <!-- Auto Submit to Product Owner -->
+        <record id="ir_cron_auto_submit_to_po" model="ir.cron">
+            <field name="name">Auto Submit to Product Owner</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_auto_submit_to_po()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(minutes=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

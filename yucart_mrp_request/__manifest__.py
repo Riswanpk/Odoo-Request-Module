@@ -1,0 +1,20 @@
+{
+    'name': 'YuCart Manufacturing Request',
+    'version': '1.0',
+    'category': 'Manufacturing',
+    'depends': ['base', 'mrp', 'mail'],
+    'data': [
+        'security/groups.xml',
+        'security/record_rules.xml',
+        'security/ir.model.access.csv',
+        'data/security.xml',
+        'data/sequence.xml',
+        'views/mrp_bom_views.xml',
+        'views/mrp_request_views.xml',
+        'views/mrp_production_views.xml',
+        'views/mrp_workorder_views.xml',
+        'views/mrp_routing_workcenter_views.xml',
+        'data/ir_cron.xml',
+    ],
+    'application': True,
+}

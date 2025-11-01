@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mrp_request_user,mrp.request user,model_mrp_request,,1,1,1,1
+access_mrp_request_design_team,mrp.request design team,model_mrp_request,yucart_mrp_request.group_design_team,1,1,1,1

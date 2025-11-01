@@ -1,0 +1,93 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Design Team: Only write in 'new' state with BOM and Product Owner -->
+        <record id="rule_design_team_submit_new" model="ir.rule">
+            <field name="name">Design Team: Submit New Requests with BOM and Product Owner</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="groups" eval="[(4, ref('yucart_mrp_request.group_design_team'))]"/>
+            <field name="domain_force">
+                [('state', '=', 'new'), ('bom_id', '!=', False), ('product_owner_id', '!=', False)]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <!-- Design Team: Only read assigned requests without BOM -->
+        <record id="rule_design_team_see_assigned" model="ir.rule">
+            <field name="name">Design Team: See Assigned Requests Without BOM</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="groups" eval="[(4, ref('yucart_mrp_request.group_design_team'))]"/>
+            <field name="domain_force">[('admin_id', '=', user.id), ('bom_exists', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <!-- Admin: See and write only in waiting_admin, approved, change_requested, rejected -->
+        <record id="rule_admin_see_waiting_and_approved" model="ir.rule">
+            <field name="name">Admin: See Waiting Admin, Approved, Change Requested, or Rejected</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="groups" eval="[(4, ref('mrp.group_mrp_manager'))]"/>
+            <field name="domain_force">
+                [('state', 'in', ['waiting_admin', 'approved', 'change_requested', 'rejected'])]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Allow Product Owners to see all workorders -->
+        <record id="rule_mrp_workorder_product_owner_all" model="ir.rule">
+            <field name="name">Product Owner: All Workorders</field>
+            <field name="model_id" ref="model_mrp_workorder"/>
+            <field name="groups" eval="[(4, ref('yucart_mrp_request.group_product_owner'))]"/>
+            <field name="domain_force">[('id','!=',False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Allow MRP Managers to see all workorders -->
+        <record id="rule_mrp_workorder_mrp_manager_all" model="ir.rule">
+            <field name="name">MRP Manager: All Workorders</field>
+            <field name="model_id" ref="model_mrp_workorder"/>
+            <field name="groups" eval="[(4, ref('mrp.group_mrp_manager'))]"/>
+            <field name="domain_force">[('id','!=',False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Default for regular users: only see workorders assigned to them or unassigned -->
+        <record id="rule_mrp_workorder_user_assigned_only" model="ir.rule">
+            <field name="name">Workorder: Assigned to me or Unassigned</field>
+            <field name="model_id" ref="model_mrp_workorder"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">
+                ['|', ('assigned_user_id', '=', user.id), ('assigned_user_id', '=', False)]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Manufacturing Users: Only Assigned or Unassigned -->
+        <record id="rule_mrp_workorder_manufacturing_user_assigned_only" model="ir.rule">
+            <field name="name">Workorder: Only Assigned or Unassigned for Manufacturing Users</field>
+            <field name="model_id" ref="model_mrp_workorder"/>
+            <field name="groups" eval="[(4, ref('mrp.group_mrp_user'))]"/>
+            <field name="domain_force">
+                ['|', ('assigned_user_id', '=', user.id), ('assigned_user_id', '=', False)]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+    </data>
+</odoo>

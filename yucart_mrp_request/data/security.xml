@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_design_team" model="res.groups">
+            <field name="name">Design Team</field>
+        </record>
+        <record id="mrp_request_design_team_rule" model="ir.rule">
+            <field name="name">Design Team: See Assigned Requests Without BOM</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="domain_force">[('admin_id', '=', user.id), ('bom_exists', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('yucart_mrp_request.group_design_team'))]"/>
+        </record>
+
+        <record id="group_production_manager" model="res.groups">
+            <field name="name">Production Manager</field>
+        </record>
+
+        <record id="mrp_request_production_manager_rule" model="ir.rule">
+            <field name="name">Production Manager: See Waiting/Change Requested/Approved Requests</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="domain_force">[('state','in',['waiting_admin','change_requested','approved','rejected'])]</field>
+            <field name="groups" eval="[(4, ref('yucart_mrp_request.group_production_manager'))]"/>
+        </record>
+
+        <!-- ADDED: Product Owner group + rule to see only requests assigned to them -->
+        <record id="group_product_owner" model="res.groups">
+            <field name="name">Product Owner</field>
+        </record>
+
+        <record id="mrp_request_product_owner_rule" model="ir.rule">
+            <field name="name">Product Owner: See assigned or new requests</field>
+            <field name="model_id" ref="model_mrp_request"/>
+            <field name="domain_force">['|',('product_owner_id', '=', user.id),('state','=','new')]</field>
+            <field name="groups" eval="[(4, ref('yucart_mrp_request.group_product_owner'))]"/>
+        </record>
+    </data>
+</odoo>

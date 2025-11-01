@@ -1,0 +1,8 @@
+<odoo>
+    <record id="seq_mrp_request" model="ir.sequence">
+        <field name="name">Manufacturing Request</field>
+        <field name="code">mrp.request</field>
+        <field name="prefix">MRREQ-</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>

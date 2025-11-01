@@ -1,0 +1,157 @@
+<odoo>
+<data>
+<!--  LIST VIEW  -->
+<record id="view_mrp_request_list" model="ir.ui.view">
+<field name="name">mrp.request.list</field>
+<field name="model">mrp.request</field>
+<field name="arch" type="xml">
+<list string="Manufacturing Requests" decoration-info="state == 'new'" decoration-warning="state == 'waiting_admin'" decoration-success="state == 'approved'" decoration-danger="state in ('rejected','change_requested')">
+<field name="name"/>
+<field name="yu_order_id"/>
+<field name="product_id"/>
+<field name="qty"/>
+<field name="uom_id"/>
+<field name="start_date"/>
+<field name="requested_date"/> <!-- Add here -->
+<field name="expected_delivery_date"/> <!-- Add here, beside requested_date -->
+<field name="product_owner_id"/>
+<field name="admin_id"/>
+<field name="bom_exists"/>
+<field name="state" widget="badge"/>
+</list>
+</field>
+</record>
+<!--  FORM VIEW  -->
+<record id="view_mrp_request_form" model="ir.ui.view">
+<field name="name">mrp.request.form</field>
+<field name="model">mrp.request</field>
+<field name="arch" type="xml">
+<form string="Manufacturing Request">
+<header>
+<!--  new → pending_po  -->
+<button name="action_submit_po" type="object" string="Submit to Product Owner" class="oe_highlight" invisible="state != 'new' or state == 'rejected' or state == 'change_requested'"/>
+<!--  pending_po → waiting_admin (Product Owner only)  -->
+<!--  hide the button for product owner when state is not pending_po (so it won't appear again in waiting_admin)  -->
+<button name="action_accept_by_po" type="object" string="Submit to Admin" class="oe_highlight" invisible="product_owner_id != uid or state != 'pending_po' or state == 'rejected' or state == 'change_requested'"/>
+<!--  Request Change: hide for product owner when change has been requested  -->
+<button name="action_request_change" type="object" string="Request Change" class="btn-secondary" invisible="state == 'change_requested' or state == 'rejected'"/>
+<!--  Orange text for change requested state  -->
+<div class="o_form_label" style="color: orange; font-weight: bold;" invisible="state != 'change_requested'"> Change requested — awaiting admin approval </div>
+<!--  waiting_admin → approved (Admin only)  -->
+<button name="action_approve_admin" type="object" string="Approve" class="btn-primary" invisible="state != 'waiting_admin' and state != 'change_requested' or state == 'rejected' or admin_id != uid"/>
+<!--  waiting_admin → rejected (Admin only)  -->
+<button name="action_reject" type="object" string="Reject" invisible="state != 'waiting_admin' and state != 'change_requested' or state == 'rejected' or admin_id != uid"/>
+</header>
+<sheet>
+<div class="oe_title">
+<h1>
+<field name="name"/>
+</h1>
+</div>
+<group>
+<group>
+<field name="yu_order_id"/>
+<field name="product_id"/>
+<field name="qty"/>
+<field name="uom_id"/>
+<field name="start_date"/>
+<field name="requested_date" required="1"/> <!-- Add here -->
+<field name="expected_delivery_date"/> <!-- Add here, beside requested_date -->
+</group>
+<group>
+<field name="product_owner_id"/>
+<field name="admin_id"/>
+<field name="bom_exists" readonly="1"/>
+<field name="bom_id" domain="[('product_tmpl_id', '=', product_tmpl_id)]"/>
+<field name="mrp_production_id" readonly="1"/>
+</group>
+</group>
+<notebook>
+<page string="Notes">
+<field name="note"/>
+</page>
+</notebook>
+</sheet>
+<chatter/>
+<div class="o_form_label" style="color: red;" invisible="state != 'rejected'">
+<strong>Rejected</strong>
+</div>
+</form>
+</field>
+</record>
+<!--  KANBAN VIEW  -->
+<record id="view_mrp_request_kanban" model="ir.ui.view">
+<field name="name">mrp.request.kanban</field>
+<field name="model">mrp.request</field>
+<field name="arch" type="xml">
+<kanban default_group_by="state">
+<field name="product_id"/>
+<field name="qty"/>
+<field name="uom_id"/>
+<field name="start_date"/>
+<templates>
+<t t-name="kanban-box">
+<div class="oe_kanban_card">
+<div class="o_kanban_details">
+<strong>
+<field name="product_id"/>
+</strong>
+<span class="badge">
+<field name="qty"/>
+<field name="uom_id"/>
+</span>
+<div>
+<field name="start_date"/>
+</div>
+<div>
+<field name="product_owner_id"/>
+</div>
+<div>
+<field name="admin_id"/>
+</div>
+</div>
+<div class="o_kanban_footer">
+<span class="badge">
+<field name="state"/>
+</span>
+</div>
+</div>
+</t>
+</templates>
+</kanban>
+</field>
+</record>
+<!--  SEARCH VIEW  -->
+<record id="view_mrp_request_search" model="ir.ui.view">
+<field name="name">mrp.request.search</field>
+<field name="model">mrp.request</field>
+<field name="arch" type="xml">
+<search string="Search Requests">
+<field name="name"/>
+<field name="yu_order_id"/>
+<field name="product_id"/>
+<field name="product_owner_id"/>
+<field name="admin_id"/>
+<filter name="filter_new" string="New" domain="[('state','=','new')]"/>
+<filter name="filter_pending_po" string="Pending Product Owner" domain="[('state','=','pending_po')]"/>
+<filter name="filter_waiting_admin" string="Waiting Admin" domain="[('state','=','waiting_admin')]"/>
+<filter name="filter_approved" string="Approved" domain="[('state','=','approved')]"/>
+<filter name="filter_rejected" string="Rejected" domain="[('state','=','rejected')]"/>
+</search>
+</field>
+</record>
+<!--  ACTION  -->
+<record id="action_mrp_request" model="ir.actions.act_window">
+<field name="name">Manufacturing Requests</field>
+<field name="res_model">mrp.request</field>
+<field name="view_mode">list,form,kanban</field>
+<field name="search_view_id" ref="view_mrp_request_search"/>
+<field name="help" type="html">
+<p class="o_view_nocontent_smiling_face">No manufacturing requests yet</p>
+<p>All incoming requests land here before becoming Manufacturing Orders.</p>
+</field>
+</record>
+<!--  MENU  -->
+<menuitem id="menu_mrp_request_root" name="Requests" parent="mrp.menu_mrp_manufacturing" sequence="2" action="action_mrp_request"/>
+</data>
+</odoo>

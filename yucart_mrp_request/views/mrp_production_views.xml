@@ -1,0 +1,66 @@
+<odoo>
+    <data>
+        <record id="view_mrp_production_form_inherit_request" model="ir.ui.view">
+            <field name="name">mrp.production.form.inherit.request</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <!-- Add request info fields -->
+                <xpath expr="//sheet/group" position="after">
+                    <group string="Request Info">
+                        <field name="mrp_request_id" readonly="1"/>
+                        <group>
+                            <field name="requested_date" string="Requested Date" widget="datetime"/>
+                            <field name="expected_delivery_date" string="Expected Delivery Date" widget="datetime"/>
+                        </group>
+                    </group>
+                </xpath>
+
+                <!-- Hide Confirm button when not draft or not approved -->
+                <xpath expr="//header/button[@name='action_confirm']" position="attributes">
+                    <attribute name="invisible">not request_approved or state != 'draft'</attribute>
+                </xpath>
+                <!-- Hide Cancel button when not approved -->
+                <xpath expr="//header/button[@name='action_cancel']" position="attributes">
+                    <attribute name="invisible">not request_approved</attribute>
+                </xpath>
+
+                <!-- Replace Produce/Produce All button with custom logic -->
+                <xpath expr="//header/button[@name='button_mark_done']" position="replace">
+                    <button name="button_mark_done" type="object" string="Produce All"
+                        invisible="state != 'confirmed' or (mrp_request_id and mrp_request_state != 'approved')"
+                        class="oe_highlight" data-hotkey="g"/>
+                </xpath>
+
+                <!-- Hide Plan when not approved or in restricted states -->
+                <xpath expr="//header/button[@name='button_plan']" position="attributes">
+                    <attribute name="invisible">not request_approved or mrp_request_state in ('pending_po', 'waiting_admin', 'change_requested')</attribute>
+                </xpath>
+                <!-- Hide Start when not approved or in restricted states -->
+                <xpath expr="//header/button[@name='action_start']" position="attributes">
+                    <attribute name="invisible">not request_approved or mrp_request_state in ('pending_po', 'waiting_admin', 'change_requested')</attribute>
+                </xpath>
+                <!-- Hide Check Availability when not approved or in restricted states -->
+                <xpath expr="//header/button[@name='action_assign']" position="attributes">
+                    <attribute name="invisible">not request_approved or mrp_request_state in ('pending_po', 'waiting_admin', 'change_requested')</attribute>
+                </xpath>
+
+                <!-- Awaiting approval text -->
+                <xpath expr="//header" position="inside">
+                    <field name="request_approved" invisible="1"/>
+                    <field name="mrp_request_state" invisible="1"/>
+                    <div class="o_form_label"
+                         style="color: orange; font-weight: bold;"
+                         invisible="request_approved or mrp_request_state not in ('pending_po', 'waiting_admin', 'change_requested')">
+                        Awaiting admin approval of manufacturing request
+                    </div>
+                </xpath>
+
+                <!-- Hide all buttons when the production is done except Unbuild -->
+                <xpath expr="//header/button" position="attributes">
+                    <attribute name="invisible">state == 'done' and name != 'action_unbuild'</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
